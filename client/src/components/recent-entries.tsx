@@ -21,11 +21,10 @@ interface RecentEntriesProps {
   entries: PortfolioEntry[];
   isLoading?: boolean;
   onDelete?: (entryId: string) => void;
+  deletingId?: string | null;
 }
 
-export function RecentEntries({ entries, isLoading = false, onDelete }: RecentEntriesProps) {
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  
+export function RecentEntries({ entries, isLoading = false, onDelete, deletingId = null }: RecentEntriesProps) {
   const sortedEntries = [...entries]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 10);
@@ -154,7 +153,6 @@ export function RecentEntries({ entries, isLoading = false, onDelete }: RecentEn
                               data-testid="button-confirm-delete"
                               onClick={() => {
                                 if (onDelete) {
-                                  setDeletingId(entry.id);
                                   onDelete(entry.id);
                                 }
                               }}

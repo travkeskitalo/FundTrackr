@@ -77,8 +77,11 @@ export default function Dashboard() {
     },
   });
 
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
   const deleteEntryMutation = useMutation({
     mutationFn: async (entryId: string) => {
+      setDeletingId(entryId);
       return apiRequest("DELETE", `/api/portfolio/entries/${entryId}`);
     },
     onSuccess: () => {
@@ -96,6 +99,9 @@ export default function Dashboard() {
         description: error.message || "Failed to delete portfolio entry.",
         variant: "destructive",
       });
+    },
+    onSettled: () => {
+      setDeletingId(null);
     },
   });
 
@@ -242,6 +248,7 @@ export default function Dashboard() {
                 entries={entries} 
                 isLoading={entriesLoading}
                 onDelete={(entryId) => deleteEntryMutation.mutate(entryId)}
+                deletingId={deletingId}
               />
               <Leaderboard stats={leaderboardStats || null} isLoading={leaderboardLoading} />
               <PublicLeaderboard entries={publicLeaderboard} isLoading={publicLeaderboardLoading} />
