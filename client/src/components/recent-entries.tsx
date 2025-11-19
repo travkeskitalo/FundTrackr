@@ -22,15 +22,15 @@ export function RecentEntries({ entries, isLoading = false }: RecentEntriesProps
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Snapshots</CardTitle>
+      <Card className="shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-semibold tracking-tight">Recent Snapshots</CardTitle>
           <CardDescription>Your latest portfolio entries</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex justify-between items-center p-4">
+              <div key={i} className="flex justify-between items-center p-4 rounded-lg border">
                 <div className="space-y-2 flex-1">
                   <div className="h-4 bg-muted rounded animate-pulse w-24" />
                   <div className="h-3 bg-muted rounded animate-pulse w-16" />
@@ -46,9 +46,9 @@ export function RecentEntries({ entries, isLoading = false }: RecentEntriesProps
 
   if (!entries.length) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Snapshots</CardTitle>
+      <Card className="shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-semibold tracking-tight">Recent Snapshots</CardTitle>
           <CardDescription>Your latest portfolio entries</CardDescription>
         </CardHeader>
         <CardContent>
@@ -64,9 +64,9 @@ export function RecentEntries({ entries, isLoading = false }: RecentEntriesProps
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Snapshots</CardTitle>
+    <Card className="shadow-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-semibold tracking-tight">Recent Snapshots</CardTitle>
         <CardDescription>Your latest portfolio entries</CardDescription>
       </CardHeader>
       <CardContent>
@@ -74,9 +74,9 @@ export function RecentEntries({ entries, isLoading = false }: RecentEntriesProps
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead className="text-right">Value</TableHead>
-                <TableHead className="text-right">Change</TableHead>
+                <TableHead className="font-semibold">Date</TableHead>
+                <TableHead className="text-right font-semibold">Value</TableHead>
+                <TableHead className="text-right font-semibold">Change</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -84,7 +84,7 @@ export function RecentEntries({ entries, isLoading = false }: RecentEntriesProps
                 const change = calculateChange(index);
                 const isPositive = change !== null && change >= 0;
                 return (
-                  <TableRow key={entry.id} data-testid={`row-entry-${index}`}>
+                  <TableRow key={entry.id} className="hover-elevate transition-colors" data-testid={`row-entry-${index}`}>
                     <TableCell className="font-medium" data-testid={`text-entry-date-${index}`}>
                       {format(new Date(entry.date), "MMM dd, yyyy")}
                     </TableCell>
@@ -97,7 +97,7 @@ export function RecentEntries({ entries, isLoading = false }: RecentEntriesProps
                     <TableCell className="text-right">
                       {change !== null ? (
                         <span
-                          className={`font-medium tabular-nums ${
+                          className={`font-semibold tabular-nums ${
                             isPositive ? "text-chart-2" : "text-destructive"
                           }`}
                           data-testid={`text-entry-change-${index}`}

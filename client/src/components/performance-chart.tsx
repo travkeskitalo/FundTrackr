@@ -189,9 +189,9 @@ export function PerformanceChart({ entries, marketData = [], isLoading = false }
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Performance Chart</CardTitle>
+      <Card className="shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-semibold tracking-tight">Performance Chart</CardTitle>
           <CardDescription>Track your portfolio's percentage change over time</CardDescription>
         </CardHeader>
         <CardContent>
@@ -208,9 +208,9 @@ export function PerformanceChart({ entries, marketData = [], isLoading = false }
 
   if (!entries.length) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Performance Chart</CardTitle>
+      <Card className="shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-semibold tracking-tight">Performance Chart</CardTitle>
           <CardDescription>Track your portfolio's percentage change over time</CardDescription>
         </CardHeader>
         <CardContent>
@@ -226,15 +226,15 @@ export function PerformanceChart({ entries, marketData = [], isLoading = false }
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Performance Chart</CardTitle>
+    <Card className="shadow-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-semibold tracking-tight">Performance Chart</CardTitle>
         <CardDescription>Your portfolio vs market indices (% change)</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {marketData.length > 0 && (
           <div className="p-4 rounded-lg bg-muted/30 border">
-            <p className="text-sm font-medium mb-3">Compare with Market Indices:</p>
+            <p className="text-sm font-semibold mb-3 text-foreground">Compare with Market Indices</p>
             <div className="flex flex-wrap gap-4">
               {marketData.map((market) => (
                 <div key={market.symbol} className="flex items-center gap-2">

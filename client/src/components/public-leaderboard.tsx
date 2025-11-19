@@ -10,10 +10,10 @@ interface PublicLeaderboardProps {
 export function PublicLeaderboard({ entries, isLoading = false }: PublicLeaderboardProps) {
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Trophy className="w-5 h-5" />
+      <Card className="shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+            <Trophy className="w-5 h-5 text-primary" />
             Public Leaderboard
           </CardTitle>
           <CardDescription>Top performing portfolios</CardDescription>
@@ -21,7 +21,7 @@ export function PublicLeaderboard({ entries, isLoading = false }: PublicLeaderbo
         <CardContent>
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 bg-muted/30 rounded animate-pulse" />
+              <div key={i} className="h-16 bg-muted/30 rounded-lg border animate-pulse" />
             ))}
           </div>
         </CardContent>
@@ -31,10 +31,10 @@ export function PublicLeaderboard({ entries, isLoading = false }: PublicLeaderbo
 
   if (entries.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Trophy className="w-5 h-5" />
+      <Card className="shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+            <Trophy className="w-5 h-5 text-primary" />
             Public Leaderboard
           </CardTitle>
           <CardDescription>Top performing portfolios</CardDescription>
@@ -56,10 +56,10 @@ export function PublicLeaderboard({ entries, isLoading = false }: PublicLeaderbo
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Trophy className="w-5 h-5" />
+    <Card className="shadow-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+          <Trophy className="w-5 h-5 text-primary" />
           Public Leaderboard
         </CardTitle>
         <CardDescription>Top performing portfolios</CardDescription>
@@ -69,7 +69,7 @@ export function PublicLeaderboard({ entries, isLoading = false }: PublicLeaderbo
           {entries.map((entry) => (
             <div
               key={entry.userId}
-              className="flex items-center justify-between p-3 rounded-lg border bg-card hover-elevate"
+              className="flex items-center justify-between p-3 rounded-lg border bg-card hover-elevate transition-shadow"
               data-testid={`leaderboard-entry-${entry.rank}`}
             >
               <div className="flex items-center gap-3">
@@ -81,10 +81,10 @@ export function PublicLeaderboard({ entries, isLoading = false }: PublicLeaderbo
                   )}
                 </div>
                 <div>
-                  <p className="font-medium" data-testid={`text-display-name-${entry.rank}`}>
+                  <p className="font-semibold" data-testid={`text-display-name-${entry.rank}`}>
                     {entry.displayName}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground font-medium">
                     ${entry.currentValue.toLocaleString("en-US", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
@@ -92,15 +92,15 @@ export function PublicLeaderboard({ entries, isLoading = false }: PublicLeaderbo
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 {entry.percentChange >= 0 ? (
-                  <TrendingUp className="w-4 h-4 text-green-500" />
+                  <TrendingUp className="w-3.5 h-3.5 text-chart-2" />
                 ) : (
-                  <TrendingDown className="w-4 h-4 text-red-500" />
+                  <TrendingDown className="w-3.5 h-3.5 text-destructive" />
                 )}
                 <span
-                  className={`font-semibold ${
-                    entry.percentChange >= 0 ? "text-green-500" : "text-red-500"
+                  className={`font-bold text-sm tabular-nums ${
+                    entry.percentChange >= 0 ? "text-chart-2" : "text-destructive"
                   }`}
                   data-testid={`text-percent-change-${entry.rank}`}
                 >
