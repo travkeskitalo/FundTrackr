@@ -81,27 +81,39 @@ export default function Settings() {
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-2xl">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold">Settings</h1>
-          <p className="text-muted-foreground">Manage your account preferences</p>
+        <div className="mb-8">
+          <Button
+            variant="ghost"
+            onClick={() => setLocation("/dashboard")}
+            className="mb-4 -ml-2"
+          >
+            ← Back to Dashboard
+          </Button>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <SettingsIcon className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+            </div>
+          </div>
+          <p className="text-muted-foreground">Manage your account preferences and privacy</p>
         </div>
 
         <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <SettingsIcon className="w-5 h-5" />
-                Profile Settings
-              </CardTitle>
+          <Card className="shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold tracking-tight">Profile Settings</CardTitle>
               <CardDescription>Update your display name and leaderboard visibility</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="displayName">Display Name</Label>
+              <div className="space-y-3">
+                <Label htmlFor="displayName" className="text-sm font-medium">Display Name</Label>
                 <Input
                   id="displayName"
                   type="text"
                   placeholder="Enter your display name"
+                  className="h-10"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   data-testid="input-display-name"
@@ -111,9 +123,9 @@ export default function Settings() {
                 </p>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="isPublic">Public Leaderboard</Label>
+              <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border">
+                <div className="space-y-1 flex-1">
+                  <Label htmlFor="isPublic" className="text-sm font-medium">Public Leaderboard</Label>
                   <p className="text-sm text-muted-foreground">
                     Show your portfolio performance on the public leaderboard
                   </p>
@@ -129,7 +141,7 @@ export default function Settings() {
               <Button
                 onClick={handleSave}
                 disabled={updateSettingsMutation.isPending}
-                className="w-full"
+                className="w-full h-10 font-medium shadow-sm"
                 data-testid="button-save-settings"
               >
                 <Save className="w-4 h-4 mr-2" />
