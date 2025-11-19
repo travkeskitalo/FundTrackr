@@ -179,7 +179,9 @@ export default function Dashboard() {
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
               <PortfolioInput
-                onSubmit={(data) => addEntryMutation.mutateAsync(data)}
+                onSubmit={async (data) => {
+                  await addEntryMutation.mutateAsync(data);
+                }}
                 isLoading={addEntryMutation.isPending}
               />
               <PerformanceChart

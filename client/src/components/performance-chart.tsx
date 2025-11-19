@@ -69,16 +69,16 @@ export function PerformanceChart({ entries, marketData = [], isLoading = false }
         label: "Your Portfolio",
         data: portfolioData,
         borderColor: "hsl(var(--chart-1))",
-        backgroundColor: "hsl(var(--chart-1) / 0.1)",
+        backgroundColor: "transparent",
         borderWidth: 3,
         pointRadius: 4,
         pointHoverRadius: 6,
         tension: 0.4,
-        fill: true,
+        fill: false,
       },
     ];
 
-    // Add selected market indices
+    // Add selected market indices - align them with portfolio dates
     marketData.forEach((market, index) => {
       if (selectedIndices.has(market.symbol)) {
         const colors = [
@@ -87,9 +87,21 @@ export function PerformanceChart({ entries, marketData = [], isLoading = false }
           "hsl(var(--chart-4))",
           "hsl(var(--chart-5))",
         ];
+        
+        // Create a map of market data by date for quick lookup
+        const marketDataMap = new Map(
+          market.data.map(d => [d.date, d.percentChange])
+        );
+        
+        // Align market data with portfolio entry dates
+        const alignedMarketData = sortedEntries.map(entry => {
+          const entryDate = new Date(entry.date).toISOString().split('T')[0];
+          return marketDataMap.get(entryDate) ?? null;
+        });
+        
         datasets.push({
           label: market.name,
-          data: market.data.map((d) => d.percentChange),
+          data: alignedMarketData as number[],
           borderColor: colors[index % colors.length],
           backgroundColor: "transparent",
           borderWidth: 2,
@@ -97,7 +109,8 @@ export function PerformanceChart({ entries, marketData = [], isLoading = false }
           pointHoverRadius: 4,
           tension: 0.4,
           fill: false,
-        });
+          spanGaps: true, // Connect points even if some dates are missing
+        } as any);
       }
     });
 
