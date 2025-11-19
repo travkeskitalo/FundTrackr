@@ -1,6 +1,6 @@
 import { users, portfolioEntries, type User, type InsertUser, type PortfolioEntry, type InsertPortfolioEntry, type UpdateUserSettingsSchema } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -12,6 +12,7 @@ export interface IStorage {
   
   getPortfolioEntries(userId: string): Promise<PortfolioEntry[]>;
   createPortfolioEntry(userId: string, entry: InsertPortfolioEntry): Promise<PortfolioEntry>;
+  deletePortfolioEntry(entryId: string, userId: string): Promise<void>;
   
   getAllUsersPerformance(): Promise<{ userId: string; percentChange: number }[]>;
   getPublicLeaderboard(): Promise<{ user: User; percentChange: number; currentValue: number }[]>;
@@ -83,6 +84,12 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return entry;
+  }
+
+  async deletePortfolioEntry(entryId: string, userId: string): Promise<void> {
+    await db
+      .delete(portfolioEntries)
+      .where(and(eq(portfolioEntries.id, entryId), eq(portfolioEntries.userId, userId)));
   }
 
   async getAllUsersPerformance(): Promise<{ userId: string; percentChange: number }[]> {

@@ -77,6 +77,28 @@ export default function Dashboard() {
     },
   });
 
+  const deleteEntryMutation = useMutation({
+    mutationFn: async (entryId: string) => {
+      return apiRequest("DELETE", `/api/portfolio/entries/${entryId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/entries"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/leaderboard"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/leaderboard/public"] });
+      toast({
+        title: "Deleted",
+        description: "Portfolio entry deleted successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete portfolio entry.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -216,7 +238,11 @@ export default function Dashboard() {
               />
             </div>
             <div className="space-y-6">
-              <RecentEntries entries={entries} isLoading={entriesLoading} />
+              <RecentEntries 
+                entries={entries} 
+                isLoading={entriesLoading}
+                onDelete={(entryId) => deleteEntryMutation.mutate(entryId)}
+              />
               <Leaderboard stats={leaderboardStats || null} isLoading={leaderboardLoading} />
               <PublicLeaderboard entries={publicLeaderboard} isLoading={publicLeaderboardLoading} />
             </div>

@@ -1,14 +1,31 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import type { PortfolioEntry } from "@shared/schema";
 import { format } from "date-fns";
+import { Trash2 } from "lucide-react";
+import { useState } from "react";
 
 interface RecentEntriesProps {
   entries: PortfolioEntry[];
   isLoading?: boolean;
+  onDelete?: (entryId: string) => void;
 }
 
-export function RecentEntries({ entries, isLoading = false }: RecentEntriesProps) {
+export function RecentEntries({ entries, isLoading = false, onDelete }: RecentEntriesProps) {
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  
   const sortedEntries = [...entries]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 10);
@@ -77,6 +94,7 @@ export function RecentEntries({ entries, isLoading = false }: RecentEntriesProps
                 <TableHead className="font-semibold">Date</TableHead>
                 <TableHead className="text-right font-semibold">Value</TableHead>
                 <TableHead className="text-right font-semibold">Change</TableHead>
+                <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -108,6 +126,46 @@ export function RecentEntries({ entries, isLoading = false }: RecentEntriesProps
                       ) : (
                         <span className="text-muted-foreground" data-testid={`text-entry-change-${index}`}>-</span>
                       )}
+                    </TableCell>
+                    <TableCell>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            data-testid={`button-delete-entry-${index}`}
+                            disabled={!onDelete}
+                          >
+                            <Trash2 className="h-4 w-4 text-muted-foreground" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Portfolio Entry</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this entry from {format(new Date(entry.date), "MMM dd, yyyy")}? 
+                              This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              data-testid="button-confirm-delete"
+                              onClick={() => {
+                                if (onDelete) {
+                                  setDeletingId(entry.id);
+                                  onDelete(entry.id);
+                                }
+                              }}
+                              disabled={deletingId === entry.id}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              {deletingId === entry.id ? "Deleting..." : "Delete"}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </TableCell>
                   </TableRow>
                 );

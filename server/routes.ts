@@ -62,6 +62,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/portfolio/entries/:id", authenticateUser, async (req, res) => {
+    try {
+      const userId = req.headers["x-user-id"] as string;
+      
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const entryId = req.params.id;
+      if (!entryId) {
+        return res.status(400).json({ error: "Entry ID is required" });
+      }
+
+      await storage.deletePortfolioEntry(entryId, userId);
+      res.status(200).json({ message: "Entry deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting portfolio entry:", error);
+      res.status(500).json({ error: "Failed to delete portfolio entry" });
+    }
+  });
+
   // Market indices endpoint
   app.get("/api/market/indices", async (req, res) => {
     try {
