@@ -12,11 +12,11 @@ FundTrack is a portfolio tracking web application that allows students to record
 
 ## Core Features
 1. **User Authentication**: Email/password authentication via Supabase Auth
-2. **Portfolio Input**: Add portfolio snapshots with value and date
+2. **Portfolio Management**: Add and delete portfolio snapshots with value and date
 3. **Performance Chart**: Interactive line chart showing percentage change over time
 4. **Market Comparison**: Toggle S&P 500 overlay on chart with mathematically correct baseline alignment
 5. **Stats Dashboard**: Current value, total return %, recent change %
-6. **Recent Entries**: Table of last 10 portfolio snapshots
+6. **Recent Entries**: Table of last 10 portfolio snapshots with delete functionality
 7. **Anonymous Leaderboard**: User rank and comparison to average performance
 
 ## Database Schema
@@ -57,6 +57,7 @@ shared/
 - `POST /api/auth/logout` - Sign out user
 - `GET /api/portfolio/entries` - Get user's portfolio entries
 - `POST /api/portfolio/entries` - Add new portfolio entry
+- `DELETE /api/portfolio/entries/:id` - Delete portfolio entry (requires authentication, userId validation)
 - `GET /api/market/indices` - Get market index percentage data
 - `GET /api/leaderboard` - Get anonymous leaderboard stats
 
@@ -69,6 +70,7 @@ Following fintech app design patterns with Inter font, clean card-based layouts,
 - **User Provisioning**: Users auto-created from verified JWT tokens on first authenticated request
 - **Admin Protection**: isMaster flag cannot be set via API (omitted from insertUserSchema)
 - **Input Validation**: Zod schemas validate all API inputs with proper type checking and length limits
+- **Delete Authorization**: Delete operations validate both entryId AND userId to prevent unauthorized deletions
 
 ## Master Account
 - **Email**: master@fundtrack.com
@@ -86,6 +88,7 @@ Following fintech app design patterns with Inter font, clean card-based layouts,
   - Ensures text visibility in both light and dark modes
 
 ## Recent Changes
+- 2025-11-19: Added delete functionality for portfolio entries with confirmation dialog and secure authorization
 - 2025-11-19: Fixed critical chart bugs - S&P 500 baseline alignment and tooltip visibility
 - 2025-11-19: Implemented professional fintech design system with refined blue/gray palette
 - 2025-11-19: Implemented comprehensive security hardening with JWT auth and Supabase integration
