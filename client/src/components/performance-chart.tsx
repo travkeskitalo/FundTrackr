@@ -36,6 +36,17 @@ interface PerformanceChartProps {
 export function PerformanceChart({ entries, marketData = [], isLoading = false }: PerformanceChartProps) {
   const [selectedIndices, setSelectedIndices] = useState<Set<string>>(new Set());
 
+  // Helper to get computed CSS variable values for Chart.js
+  const getCSSVar = (varName: string): string => {
+    if (typeof window === 'undefined') return '#000000';
+    const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    // If it's in H S L format (space-separated), convert to hsl()
+    if (value && !value.startsWith('#') && !value.startsWith('rgb') && !value.startsWith('hsl')) {
+      return `hsl(${value})`;
+    }
+    return value || '#000000';
+  };
+
   const toggleIndex = (symbol: string) => {
     const newSet = new Set(selectedIndices);
     if (newSet.has(symbol)) {
@@ -78,7 +89,7 @@ export function PerformanceChart({ entries, marketData = [], isLoading = false }
       },
     ];
 
-    // Add selected market indices - align them with portfolio dates
+    // Add selected market indices - align them with portfolio dates and recalculate baseline
     marketData.forEach((market, index) => {
       if (selectedIndices.has(market.symbol)) {
         const colors = [
@@ -88,15 +99,32 @@ export function PerformanceChart({ entries, marketData = [], isLoading = false }
           "hsl(var(--chart-5))",
         ];
         
-        // Create a map of market data by date for quick lookup
+        // Create a map of market percentage data by date
         const marketDataMap = new Map(
           market.data.map(d => [d.date, d.percentChange])
         );
         
-        // Align market data with portfolio entry dates
+        // Get the first portfolio entry date as our new baseline
+        const firstPortfolioDate = new Date(sortedEntries[0].date).toISOString().split('T')[0];
+        const baselineMarketPercent = marketDataMap.get(firstPortfolioDate);
+        
+        // Reconstruct actual price levels from percentages, then recalculate from new baseline
         const alignedMarketData = sortedEntries.map(entry => {
           const entryDate = new Date(entry.date).toISOString().split('T')[0];
-          return marketDataMap.get(entryDate) ?? null;
+          const marketPercent = marketDataMap.get(entryDate);
+          
+          if (baselineMarketPercent !== undefined && marketPercent !== undefined) {
+            // Reconstruct relative prices from percentages (using 100 as arbitrary base)
+            // If percent = ((price - base) / base) * 100, then price = base * (1 + percent/100)
+            const basePrice = 100; // Arbitrary baseline
+            const baselinePrice = basePrice * (1 + baselineMarketPercent / 100);
+            const currentPrice = basePrice * (1 + marketPercent / 100);
+            
+            // Calculate percentage change from portfolio baseline date
+            const percentChange = ((currentPrice - baselinePrice) / baselinePrice) * 100;
+            return percentChange;
+          }
+          return null;
         });
         
         datasets.push({
@@ -138,13 +166,14 @@ export function PerformanceChart({ entries, marketData = [], isLoading = false }
             size: 12,
             family: "Inter, sans-serif",
           },
+          color: getCSSVar('--foreground'),
         },
       },
       tooltip: {
-        backgroundColor: "hsl(var(--popover))",
-        titleColor: "hsl(var(--popover-foreground))",
-        bodyColor: "hsl(var(--popover-foreground))",
-        borderColor: "hsl(var(--popover-border))",
+        backgroundColor: getCSSVar('--popover'),
+        titleColor: getCSSVar('--popover-foreground'),
+        bodyColor: getCSSVar('--popover-foreground'),
+        borderColor: getCSSVar('--border'),
         borderWidth: 1,
         padding: 12,
         displayColors: true,
@@ -169,9 +198,10 @@ export function PerformanceChart({ entries, marketData = [], isLoading = false }
           font: {
             family: "Inter, sans-serif",
           },
+          color: getCSSVar('--muted-foreground'),
         },
         grid: {
-          color: "hsl(var(--border))",
+          color: getCSSVar('--border'),
         },
       },
       x: {
@@ -182,6 +212,7 @@ export function PerformanceChart({ entries, marketData = [], isLoading = false }
           font: {
             family: "Inter, sans-serif",
           },
+          color: getCSSVar('--muted-foreground'),
         },
       },
     },
