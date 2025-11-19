@@ -135,31 +135,31 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-primary" />
+          <div className="flex h-14 items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center shadow-sm">
+                <TrendingUp className="w-5 h-5 text-primary-foreground" />
               </div>
-              <h1 className="text-xl font-bold">FundTrack</h1>
+              <h1 className="text-lg font-bold tracking-tight">FundTrack</h1>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground hidden sm:inline" data-testid="text-user-email">
+              <span className="text-sm text-muted-foreground hidden sm:inline font-medium" data-testid="text-user-email">
                 {user.email}
               </span>
               {userData?.isMaster && (
                 <Link href="/admin">
                   <Button variant="outline" size="sm" data-testid="button-admin">
-                    <Shield className="w-4 h-4 mr-2" />
-                    Admin
+                    <Shield className="w-4 h-4 mr-1.5" />
+                    <span className="hidden sm:inline">Admin</span>
                   </Button>
                 </Link>
               )}
               <Link href="/settings">
                 <Button variant="outline" size="sm" data-testid="button-settings">
-                  <SettingsIcon className="w-4 h-4 mr-2" />
-                  Settings
+                  <SettingsIcon className="w-4 h-4 sm:mr-1.5" />
+                  <span className="hidden sm:inline">Settings</span>
                 </Button>
               </Link>
               <Button
@@ -168,17 +168,17 @@ export default function Dashboard() {
                 onClick={handleSignOut}
                 data-testid="button-logout"
               >
-                <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
+                <LogOut className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Sign Out</span>
               </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-8">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="space-y-6">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <StatCard
               title="Current Value"
               value={stats.currentValue}

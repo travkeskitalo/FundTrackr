@@ -14,32 +14,36 @@ export function StatCard({ title, value, change, icon, isLoading = false }: Stat
   const isPositive = change !== undefined && change >= 0;
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        {icon && <div className="text-muted-foreground">{icon}</div>}
+    <Card className="shadow-sm hover-elevate transition-shadow duration-200">
+      <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0 pb-3">
+        <CardTitle className="text-sm font-medium text-muted-foreground tracking-tight">{title}</CardTitle>
+        {icon && (
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+            {icon}
+          </div>
+        )}
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-1">
         {isLoading ? (
           <div className="space-y-2">
-            <div className="h-8 bg-muted rounded animate-pulse" />
+            <div className="h-9 bg-muted rounded animate-pulse" />
             <div className="h-4 w-20 bg-muted rounded animate-pulse" />
           </div>
         ) : (
           <>
-            <div className="text-3xl font-bold tabular-nums" data-testid={`text-${title.toLowerCase().replace(/\s+/g, '-')}`}>
+            <div className="text-3xl font-bold tabular-nums tracking-tight" data-testid={`text-${title.toLowerCase().replace(/\s+/g, '-')}`}>
               {value}
             </div>
             {change !== undefined && (
-              <div className="flex items-center gap-1 mt-1">
+              <div className="flex items-center gap-1.5 pt-1">
                 {isPositive ? (
-                  <ArrowUp className="w-4 h-4 text-chart-2" />
+                  <ArrowUp className="w-3.5 h-3.5 text-chart-2" />
                 ) : (
-                  <ArrowDown className="w-4 h-4 text-destructive" />
+                  <ArrowDown className="w-3.5 h-3.5 text-destructive" />
                 )}
                 <span
                   className={cn(
-                    "text-sm font-medium tabular-nums",
+                    "text-sm font-semibold tabular-nums",
                     isPositive ? "text-chart-2" : "text-destructive"
                   )}
                   data-testid="stat-change"

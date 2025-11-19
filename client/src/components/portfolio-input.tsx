@@ -43,33 +43,33 @@ export function PortfolioInput({ onSubmit, isLoading = false }: PortfolioInputPr
   };
 
   return (
-    <Card>
-      <CardHeader className="space-y-1">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            <TrendingUp className="w-4 h-4 text-primary" />
+    <Card className="shadow-sm">
+      <CardHeader className="space-y-1 pb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+            <TrendingUp className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <CardTitle className="text-xl">Add Portfolio Snapshot</CardTitle>
-            <CardDescription>Record your total portfolio value</CardDescription>
+            <CardTitle className="text-lg font-semibold tracking-tight">Add Portfolio Snapshot</CardTitle>
+            <CardDescription className="text-sm">Record your total portfolio value</CardDescription>
           </div>
         </div>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
             <FormField
               control={form.control}
               name="value"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Portfolio Value ($)</FormLabel>
+                  <FormLabel className="text-sm font-medium">Portfolio Value ($)</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
                       placeholder="10000.00"
                       data-testid="input-portfolio-value"
-                      className="text-2xl font-semibold tabular-nums"
+                      className="text-xl font-semibold tabular-nums h-12"
                       {...field}
                     />
                   </FormControl>
@@ -82,14 +82,14 @@ export function PortfolioInput({ onSubmit, isLoading = false }: PortfolioInputPr
               name="date"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Date</FormLabel>
+                  <FormLabel className="text-sm font-medium">Date</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           variant="outline"
                           className={cn(
-                            "w-full justify-start text-left font-normal",
+                            "w-full justify-start text-left font-normal h-10",
                             !field.value && "text-muted-foreground"
                           )}
                           data-testid="button-date-picker"
@@ -115,7 +115,7 @@ export function PortfolioInput({ onSubmit, isLoading = false }: PortfolioInputPr
             />
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-10 font-medium shadow-sm"
               disabled={isLoading || isSubmitting}
               data-testid="button-save-snapshot"
             >
