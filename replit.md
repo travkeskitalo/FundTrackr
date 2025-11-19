@@ -14,7 +14,7 @@ FundTrack is a portfolio tracking web application that allows students to record
 1. **User Authentication**: Email/password authentication via Supabase Auth
 2. **Portfolio Input**: Add portfolio snapshots with value and date
 3. **Performance Chart**: Interactive line chart showing percentage change over time
-4. **Market Comparison**: Toggle S&P 500, QQQ, VIX, and Dow Jones overlays on chart
+4. **Market Comparison**: Toggle S&P 500 overlay on chart with mathematically correct baseline alignment
 5. **Stats Dashboard**: Current value, total return %, recent change %
 6. **Recent Entries**: Table of last 10 portfolio snapshots
 7. **Anonymous Leaderboard**: User rank and comparison to average performance
@@ -75,6 +75,18 @@ Following fintech app design patterns with Inter font, clean card-based layouts,
 - **Password**: Master1234
 - **Access**: Admin panel at /admin to manage public leaderboard users
 
+## Chart Implementation
+### Performance Chart Features
+- **Baseline Alignment**: Market data (S&P 500) is mathematically rebased to user's first portfolio entry date
+  - Reconstructs price levels from API percentage data using: price = base * (1 + percent/100)
+  - Recalculates percentages from user's baseline: ((current - baseline) / baseline) * 100
+  - Ensures S&P 500 starts at 0% when compared to user's portfolio
+- **Tooltip Visibility**: Uses `getCSSVar()` helper to compute actual CSS variable values for Chart.js
+  - Resolves theme-aware colors at runtime for tooltip, legend, and axis labels
+  - Ensures text visibility in both light and dark modes
+
 ## Recent Changes
+- 2025-11-19: Fixed critical chart bugs - S&P 500 baseline alignment and tooltip visibility
+- 2025-11-19: Implemented professional fintech design system with refined blue/gray palette
 - 2025-11-19: Implemented comprehensive security hardening with JWT auth and Supabase integration
 - 2025-01-19: Initial setup with complete frontend components and authentication flow
