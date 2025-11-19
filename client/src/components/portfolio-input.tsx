@@ -23,9 +23,10 @@ export function PortfolioInput({ onSubmit, isLoading = false }: PortfolioInputPr
   const form = useForm<InsertPortfolioEntry>({
     resolver: zodResolver(insertPortfolioEntrySchema),
     defaultValues: {
-      value: "",
+      value: undefined as any,
       date: new Date(),
     },
+    mode: "onSubmit",
   });
 
   const handleSubmit = async (data: InsertPortfolioEntry) => {
@@ -33,7 +34,7 @@ export function PortfolioInput({ onSubmit, isLoading = false }: PortfolioInputPr
     try {
       await onSubmit(data);
       form.reset({
-        value: "",
+        value: undefined as any,
         date: new Date(),
       });
     } finally {

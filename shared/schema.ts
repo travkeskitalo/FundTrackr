@@ -38,9 +38,12 @@ export const insertPortfolioEntrySchema = createInsertSchema(portfolioEntries).o
   userId: true,
   createdAt: true,
 }).extend({
-  value: z.string().min(1, "Portfolio value is required").refine(
-    (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
-    "Please enter a valid positive number"
+  value: z.preprocess(
+    (val) => val === "" || val === undefined || val === null ? undefined : val,
+    z.string().min(1, "Portfolio value is required").refine(
+      (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
+      "Please enter a valid positive number"
+    )
   ),
   date: z.coerce.date(),
 });
