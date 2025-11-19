@@ -220,23 +220,26 @@ export function PerformanceChart({ entries, marketData = [], isLoading = false }
       </CardHeader>
       <CardContent className="space-y-6">
         {marketData.length > 0 && (
-          <div className="flex flex-wrap gap-4">
-            {marketData.map((market) => (
-              <div key={market.symbol} className="flex items-center gap-2">
-                <Checkbox
-                  id={market.symbol}
-                  checked={selectedIndices.has(market.symbol)}
-                  onCheckedChange={() => toggleIndex(market.symbol)}
-                  data-testid={`checkbox-${market.symbol.toLowerCase()}`}
-                />
-                <Label
-                  htmlFor={market.symbol}
-                  className="text-sm font-medium cursor-pointer"
-                >
-                  {market.name}
-                </Label>
-              </div>
-            ))}
+          <div className="p-4 rounded-lg bg-muted/30 border">
+            <p className="text-sm font-medium mb-3">Compare with Market Indices:</p>
+            <div className="flex flex-wrap gap-4">
+              {marketData.map((market) => (
+                <div key={market.symbol} className="flex items-center gap-2">
+                  <Checkbox
+                    id={market.symbol}
+                    checked={selectedIndices.has(market.symbol)}
+                    onCheckedChange={() => toggleIndex(market.symbol)}
+                    data-testid={`checkbox-${market.symbol.toLowerCase()}`}
+                  />
+                  <Label
+                    htmlFor={market.symbol}
+                    className="text-sm font-medium cursor-pointer"
+                  >
+                    {market.name}
+                  </Label>
+                </div>
+              ))}
+            </div>
           </div>
         )}
         <div className="w-full h-[400px]" data-testid="chart-performance">
