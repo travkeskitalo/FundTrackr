@@ -45,30 +45,31 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-2 text-center">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader className="space-y-3 text-center pb-6">
           <div className="flex justify-center mb-2">
-            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-primary" />
+            <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center shadow-sm">
+              <TrendingUp className="w-7 h-7 text-primary-foreground" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Welcome to FundTrack</CardTitle>
-          <CardDescription>Sign in to track your investment portfolio</CardDescription>
+          <CardTitle className="text-3xl font-bold tracking-tight">Welcome Back</CardTitle>
+          <CardDescription className="text-base">Sign in to track your investment portfolio</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-6 pb-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-sm font-medium">Email</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
                         placeholder="you@example.com"
+                        className="h-10"
                         data-testid="input-email"
                         {...field}
                       />
@@ -82,11 +83,12 @@ export default function Login() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-sm font-medium">Password</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
                         placeholder="Enter your password"
+                        className="h-10"
                         data-testid="input-password"
                         {...field}
                       />
@@ -97,7 +99,7 @@ export default function Login() {
               />
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full h-10 font-medium shadow-sm mt-6"
                 disabled={isLoading}
                 data-testid="button-login"
               >
@@ -105,12 +107,12 @@ export default function Login() {
               </Button>
             </form>
           </Form>
-          <div className="mt-6 text-center">
+          <div className="mt-6 pt-6 border-t text-center">
             <p className="text-sm text-muted-foreground">
               Don't have an account?{" "}
               <button
                 onClick={() => setLocation("/signup")}
-                className="text-primary font-medium hover:underline"
+                className="text-primary font-semibold hover:underline transition-colors"
                 data-testid="link-signup"
               >
                 Sign up
