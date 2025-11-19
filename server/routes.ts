@@ -38,6 +38,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Unauthorized" });
       }
 
+      // Ensure user exists in storage for leaderboard calculations
+      const existingUser = await storage.getUser(userId);
+      if (!existingUser) {
+        // Create a placeholder user record for Supabase-authenticated users
+        await storage.createUser({
+          email: `user-${userId}@placeholder.com`,
+          password: "",
+        }, userId);
+      }
+
       // Validate request body
       const validationResult = insertPortfolioEntrySchema.safeParse(req.body);
       if (!validationResult.success) {

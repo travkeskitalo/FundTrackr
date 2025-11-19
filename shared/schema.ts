@@ -35,7 +35,7 @@ export const insertPortfolioEntrySchema = createInsertSchema(portfolioEntries).o
     (val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0,
     "Please enter a valid positive number"
   ),
-  date: z.date(),
+  date: z.coerce.date(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

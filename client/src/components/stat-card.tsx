@@ -27,7 +27,7 @@ export function StatCard({ title, value, change, icon, isLoading = false }: Stat
           </div>
         ) : (
           <>
-            <div className="text-3xl font-bold tabular-nums" data-testid={`stat-${title.toLowerCase().replace(/\s+/g, '-')}`}>
+            <div className="text-3xl font-bold tabular-nums" data-testid={`text-${title.toLowerCase().replace(/\s+/g, '-')}`}>
               {value}
             </div>
             {change !== undefined && (

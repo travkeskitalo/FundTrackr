@@ -5,10 +5,18 @@ export async function signUp(email: string, password: string): Promise<User> {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
+    options: {
+      emailRedirectTo: `${window.location.origin}/dashboard`,
+    },
   });
 
   if (error) throw new Error(error.message);
   if (!data.user) throw new Error('Failed to create user');
+
+  // Check if email confirmation is required
+  if (data.session === null) {
+    throw new Error('Please check your email to confirm your account before signing in.');
+  }
 
   return {
     id: data.user.id,

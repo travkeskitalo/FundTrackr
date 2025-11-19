@@ -72,11 +72,11 @@ export function Leaderboard({ stats, isLoading = false }: LeaderboardProps) {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="p-6 rounded-lg bg-primary/5 border border-primary/20" data-testid="leaderboard-user-stats">
+        <div className="p-6 rounded-lg bg-primary/5 border border-primary/20" data-testid="card-user-stats">
           <div className="flex items-start justify-between mb-4">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Your Performance</p>
-              <p className="text-3xl font-bold tabular-nums">
+              <p className="text-3xl font-bold tabular-nums" data-testid="text-user-performance">
                 {stats.userPercentChange >= 0 ? "+" : ""}
                 {stats.userPercentChange.toFixed(2)}%
               </p>
@@ -86,11 +86,11 @@ export function Leaderboard({ stats, isLoading = false }: LeaderboardProps) {
           <div className="flex items-center justify-between pt-4 border-t border-border">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Your Rank</p>
-              <p className="text-lg font-semibold">{stats.userRank}</p>
+              <p className="text-lg font-semibold" data-testid="text-user-rank">{stats.userRank}</p>
             </div>
             <div className="text-right">
               <p className="text-sm text-muted-foreground mb-1">Total Investors</p>
-              <p className="text-lg font-semibold">{stats.totalUsers}</p>
+              <p className="text-lg font-semibold" data-testid="text-total-users">{stats.totalUsers}</p>
             </div>
           </div>
         </div>

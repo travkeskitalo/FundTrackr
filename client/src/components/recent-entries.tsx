@@ -85,10 +85,10 @@ export function RecentEntries({ entries, isLoading = false }: RecentEntriesProps
                 const isPositive = change !== null && change >= 0;
                 return (
                   <TableRow key={entry.id} data-testid={`row-entry-${index}`}>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium" data-testid={`text-entry-date-${index}`}>
                       {format(new Date(entry.date), "MMM dd, yyyy")}
                     </TableCell>
-                    <TableCell className="text-right font-semibold tabular-nums">
+                    <TableCell className="text-right font-semibold tabular-nums" data-testid={`text-entry-value-${index}`}>
                       ${parseFloat(entry.value).toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
@@ -100,12 +100,13 @@ export function RecentEntries({ entries, isLoading = false }: RecentEntriesProps
                           className={`font-medium tabular-nums ${
                             isPositive ? "text-chart-2" : "text-destructive"
                           }`}
+                          data-testid={`text-entry-change-${index}`}
                         >
                           {isPositive ? "+" : ""}
                           {change.toFixed(2)}%
                         </span>
                       ) : (
-                        <span className="text-muted-foreground">-</span>
+                        <span className="text-muted-foreground" data-testid={`text-entry-change-${index}`}>-</span>
                       )}
                     </TableCell>
                   </TableRow>
