@@ -1,12 +1,14 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp, decimal } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, decimal, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id").primaryKey(),
   email: text("email").notNull().unique(),
-  password: text("password").notNull(),
+  displayName: text("display_name"),
+  isPublic: boolean("is_public").default(false).notNull(),
+  isMaster: boolean("is_master").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -19,9 +21,14 @@ export const portfolioEntries = pgTable("portfolio_entries", {
 });
 
 export const insertUserSchema = createInsertSchema(users).omit({
-  id: true,
   createdAt: true,
+  isMaster: true, // Prevent users from setting isMaster
 }).extend({
+  email: z.string().email("Please enter a valid email address"),
+});
+
+// Separate schema for signup that includes password (used for Supabase auth, not stored in our DB)
+export const signupSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
@@ -61,3 +68,19 @@ export type LeaderboardStats = {
   userRank: string;
   totalUsers: number;
 };
+
+export type PublicLeaderboardEntry = {
+  userId: string;
+  displayName: string;
+  email: string;
+  percentChange: number;
+  currentValue: number;
+  rank: number;
+};
+
+export const updateUserSettingsSchema = z.object({
+  displayName: z.string().max(50).optional(),
+  isPublic: z.boolean().optional(),
+});
+
+export type UpdateUserSettingsSchema = z.infer<typeof updateUserSettingsSchema>;

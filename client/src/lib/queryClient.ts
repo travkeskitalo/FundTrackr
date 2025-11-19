@@ -12,8 +12,8 @@ async function getAuthHeaders(): Promise<HeadersInit> {
   const { data: { session } } = await supabase.auth.getSession();
   const headers: HeadersInit = {};
   
-  if (session?.user?.id) {
-    headers["x-user-id"] = session.user.id;
+  if (session?.access_token) {
+    headers["Authorization"] = `Bearer ${session.access_token}`;
   }
   
   return headers;

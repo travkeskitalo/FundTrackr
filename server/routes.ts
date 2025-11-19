@@ -1,8 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertPortfolioEntrySchema } from "@shared/schema";
+import { insertPortfolioEntrySchema, updateUserSettingsSchema } from "@shared/schema";
 import type { MarketIndexData, LeaderboardStats } from "@shared/schema";
+import { authenticateUser } from "./middleware/auth";
 
 const ALPHA_VANTAGE_KEY = process.env.ALPHA_VANTAGE_KEY || "";
 
@@ -12,7 +13,7 @@ const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Portfolio entry endpoints
-  app.get("/api/portfolio/entries", async (req, res) => {
+  app.get("/api/portfolio/entries", authenticateUser, async (req, res) => {
     try {
       // In a real app, get userId from session/auth token
       // For this demo, we'll use a header or mock user
@@ -30,7 +31,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/portfolio/entries", async (req, res) => {
+  app.post("/api/portfolio/entries", authenticateUser, async (req, res) => {
     try {
       const userId = req.headers["x-user-id"] as string;
       
@@ -38,15 +39,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Unauthorized" });
       }
 
-      // Ensure user exists in storage for leaderboard calculations
-      const existingUser = await storage.getUser(userId);
-      if (!existingUser) {
-        // Create a placeholder user record for Supabase-authenticated users
-        await storage.createUser({
-          email: `user-${userId}@placeholder.com`,
-          password: "",
-        }, userId);
-      }
+      // Ensure user exists in storage (will be created with proper email from JWT if needed)
+      // Note: In production, user creation should happen during signup
+      // This is a fallback for existing Supabase users
+      const userEmail = req.headers["x-user-email"] as string || `user-${userId}@placeholder.com`;
+      await storage.ensureUserExists(userId, userEmail);
 
       // Validate request body
       const validationResult = insertPortfolioEntrySchema.safeParse(req.body);
@@ -76,9 +73,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Fetch market data from Alpha Vantage
       const indices = [
         { symbol: "SPY", name: "S&P 500" },
-        { symbol: "QQQ", name: "QQQ" },
-        { symbol: "VIX", name: "VIX" },
-        { symbol: "DIA", name: "Dow Jones" },
       ];
 
       const marketData: MarketIndexData[] = [];
@@ -130,8 +124,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get current user endpoint
+  app.get("/api/user/settings", authenticateUser, async (req, res) => {
+    try {
+      const userId = req.headers["x-user-id"] as string;
+      
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user settings:", error);
+      res.status(500).json({ error: "Failed to fetch user settings" });
+    }
+  });
+
+  // User settings endpoint
+  app.patch("/api/user/settings", authenticateUser, async (req, res) => {
+    try {
+      const userId = req.headers["x-user-id"] as string;
+      
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      // Validate request body
+      const validationResult = updateUserSettingsSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ 
+          error: "Validation failed", 
+          details: validationResult.error.errors 
+        });
+      }
+
+      const updatedUser = await storage.updateUserSettings(userId, validationResult.data);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user settings:", error);
+      res.status(500).json({ error: "Failed to update settings" });
+    }
+  });
+
+  // Public leaderboard endpoint
+  app.get("/api/leaderboard/public", async (req, res) => {
+    try {
+      const leaderboardData = await storage.getPublicLeaderboard();
+      
+      const publicLeaderboard = leaderboardData.map((entry, index) => ({
+        userId: entry.user.id,
+        displayName: entry.user.displayName || entry.user.email.split('@')[0],
+        email: entry.user.email,
+        percentChange: entry.percentChange,
+        currentValue: entry.currentValue,
+        rank: index + 1,
+      }));
+
+      res.json(publicLeaderboard);
+    } catch (error) {
+      console.error("Error fetching public leaderboard:", error);
+      res.status(500).json({ error: "Failed to fetch public leaderboard" });
+    }
+  });
+
+  // Admin endpoint to remove user from leaderboard (master account only)
+  app.post("/api/admin/remove-from-leaderboard", authenticateUser, async (req, res) => {
+    try {
+      const adminId = req.headers["x-user-id"] as string;
+
+      // Check if user is master account
+      const adminUser = await storage.getUser(adminId);
+      if (!adminUser || !adminUser.isMaster) {
+        return res.status(403).json({ error: "Forbidden: Admin access required" });
+      }
+
+      const { userId } = req.body;
+      if (!userId || typeof userId !== 'string') {
+        return res.status(400).json({ error: "Valid user ID required" });
+      }
+
+      await storage.removeUserFromLeaderboard(userId);
+      res.json({ success: true, message: "User removed from leaderboard" });
+    } catch (error) {
+      console.error("Error removing user from leaderboard:", error);
+      res.status(500).json({ error: "Failed to remove user" });
+    }
+  });
+
   // Leaderboard endpoint
-  app.get("/api/leaderboard", async (req, res) => {
+  app.get("/api/leaderboard", authenticateUser, async (req, res) => {
     try {
       const userId = req.headers["x-user-id"] as string;
       

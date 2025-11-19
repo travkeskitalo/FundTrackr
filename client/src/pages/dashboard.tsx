@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { getCurrentUser, signOut } from "@/lib/auth";
-import type { PortfolioEntry, InsertPortfolioEntry, MarketIndexData, LeaderboardStats } from "@shared/schema";
+import type { PortfolioEntry, InsertPortfolioEntry, MarketIndexData, LeaderboardStats, PublicLeaderboardEntry, User } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { PortfolioInput } from "@/components/portfolio-input";
 import { StatCard } from "@/components/stat-card";
 import { PerformanceChart } from "@/components/performance-chart";
 import { RecentEntries } from "@/components/recent-entries";
 import { Leaderboard } from "@/components/leaderboard";
+import { PublicLeaderboard } from "@/components/public-leaderboard";
 import { useToast } from "@/hooks/use-toast";
-import { DollarSign, TrendingUp, Activity, LogOut } from "lucide-react";
+import { DollarSign, TrendingUp, Activity, LogOut, Settings as SettingsIcon, Shield } from "lucide-react";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
@@ -42,6 +43,16 @@ export default function Dashboard() {
 
   const { data: leaderboardStats, isLoading: leaderboardLoading } = useQuery<LeaderboardStats>({
     queryKey: ["/api/leaderboard"],
+    enabled: !!user,
+  });
+
+  const { data: userData } = useQuery<User>({
+    queryKey: ["/api/user/settings"],
+    enabled: !!user,
+  });
+
+  const { data: publicLeaderboard = [], isLoading: publicLeaderboardLoading } = useQuery<PublicLeaderboardEntry[]>({
+    queryKey: ["/api/leaderboard/public"],
     enabled: !!user,
   });
 
@@ -133,10 +144,24 @@ export default function Dashboard() {
               </div>
               <h1 className="text-xl font-bold">FundTrack</h1>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground hidden sm:inline" data-testid="text-user-email">
                 {user.email}
               </span>
+              {userData?.isMaster && (
+                <Link href="/admin">
+                  <Button variant="outline" size="sm" data-testid="button-admin">
+                    <Shield className="w-4 h-4 mr-2" />
+                    Admin
+                  </Button>
+                </Link>
+              )}
+              <Link href="/settings">
+                <Button variant="outline" size="sm" data-testid="button-settings">
+                  <SettingsIcon className="w-4 h-4 mr-2" />
+                  Settings
+                </Button>
+              </Link>
               <Button
                 variant="outline"
                 size="sm"
@@ -193,6 +218,7 @@ export default function Dashboard() {
             <div className="space-y-6">
               <RecentEntries entries={entries} isLoading={entriesLoading} />
               <Leaderboard stats={leaderboardStats || null} isLoading={leaderboardLoading} />
+              <PublicLeaderboard entries={publicLeaderboard} isLoading={publicLeaderboardLoading} />
             </div>
           </div>
         </div>

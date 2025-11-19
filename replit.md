@@ -63,5 +63,18 @@ shared/
 ## Design System
 Following fintech app design patterns with Inter font, clean card-based layouts, and professional color scheme. See `design_guidelines.md` for detailed specifications.
 
+## Security Implementation
+- **JWT Authentication**: Service role key validation for production-ready token verification
+- **Password Handling**: No passwords stored in database - Supabase handles all authentication
+- **User Provisioning**: Users auto-created from verified JWT tokens on first authenticated request
+- **Admin Protection**: isMaster flag cannot be set via API (omitted from insertUserSchema)
+- **Input Validation**: Zod schemas validate all API inputs with proper type checking and length limits
+
+## Master Account
+- **Email**: master@fundtrack.com
+- **Password**: Master1234
+- **Access**: Admin panel at /admin to manage public leaderboard users
+
 ## Recent Changes
+- 2025-11-19: Implemented comprehensive security hardening with JWT auth and Supabase integration
 - 2025-01-19: Initial setup with complete frontend components and authentication flow
